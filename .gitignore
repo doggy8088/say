@@ -1,0 +1,11 @@
+target/
+node_modules/
+npm/*-bin/
+dist/
+*.tgz
+*.mp3
+*.wav
+*.ogg
+*.webm
+.DS_Store
+Thumbs.db

@@ -1,0 +1,24 @@
+[package]
+name = "say"
+version = "0.1.0"
+edition = "2024"
+description = "Cross-platform macOS-compatible say CLI powered by Microsoft Edge TTS"
+license = "MIT"
+repository = "https://github.com/doggy8088/say"
+
+[[bin]]
+name = "say"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive", "env"] }
+cpal = "0.18"
+crossterm = "0.29"
+msedge-tts = "0.4"
+rodio = { version = "0.23", default-features = false, features = ["playback", "mp3", "wav", "vorbis"] }
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

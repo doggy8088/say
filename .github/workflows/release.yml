@@ -1,0 +1,105 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: aarch64-apple-darwin
+            os: macos-15
+            ext: tar.xz
+          - target: x86_64-apple-darwin
+            os: macos-15-intel
+            ext: tar.xz
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            ext: tar.xz
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-24.04-arm
+            ext: tar.xz
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            ext: zip
+          - target: aarch64-pc-windows-msvc
+            os: windows-11-arm
+            ext: zip
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install Linux audio dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libasound2-dev pkg-config
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - run: cargo build --release --locked --target ${{ matrix.target }}
+      - name: Package binary (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          set -euo pipefail
+          binary="target/${{ matrix.target }}/release/say"
+          if [[ ! -f "$binary" ]]; then
+            echo "Missing built binary: $binary" >&2
+            exit 1
+          fi
+
+          mkdir -p dist
+          archive="dist/say-${{ matrix.target }}.${{ matrix.ext }}"
+          tar -cJf "$archive" -C "$(dirname "$binary")" "$(basename "$binary")"
+
+          if command -v sha256sum >/dev/null 2>&1; then
+            hash="$(sha256sum "$archive" | awk '{print $1}')"
+          else
+            hash="$(shasum -a 256 "$archive" | awk '{print $1}')"
+          fi
+          printf '%s  %s\n' "$hash" "$(basename "$archive")" > "${archive}.sha256"
+      - name: Package binary (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $binary = "target/${{ matrix.target }}/release/say.exe"
+          if (!(Test-Path $binary)) {
+            throw "Missing built binary: $binary"
+          }
+
+          New-Item -ItemType Directory -Force dist | Out-Null
+          $archive = "dist/say-${{ matrix.target }}.${{ matrix.ext }}"
+          Compress-Archive -Path $binary -DestinationPath $archive -Force
+
+          $hash = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  $(Split-Path $archive -Leaf)" | Out-File "$archive.sha256" -Encoding ascii
+      - uses: actions/upload-artifact@v4
+        with:
+          name: say-${{ matrix.target }}
+          path: dist/*
+
+  publish-release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Publish GitHub Release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" artifacts/* --clobber
+          else
+            gh release create "$TAG" artifacts/* --verify-tag --generate-notes
+          fi

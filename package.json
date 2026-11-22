@@ -1,0 +1,43 @@
+{
+  "name": "@willh/say",
+  "version": "0.1.0",
+  "description": "Cross-platform say CLI powered by Microsoft Edge TTS (msedge-tts), compatible with macOS say with default voice zh-TW-HsiaoChenNeural.",
+  "bin": {
+    "say": "npm/cli.cjs"
+  },
+  "scripts": {
+    "postinstall": "node npm/postinstall.cjs",
+    "test": "node --test tests/postinstall.test.cjs",
+    "prepublishOnly": "npm test && npm pack --dry-run && node npm/prepublish-check.cjs"
+  },
+  "files": [
+    "npm/cli.cjs",
+    "npm/postinstall.cjs",
+    "npm/prepublish-check.cjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/doggy8088/say.git"
+  },
+  "homepage": "https://github.com/doggy8088/say#readme",
+  "bugs": {
+    "url": "https://github.com/doggy8088/say/issues"
+  },
+  "keywords": [
+    "say",
+    "tts",
+    "text-to-speech",
+    "msedge-tts",
+    "edge-tts",
+    "speech",
+    "rust",
+    "cli"
+  ],
+  "author": "Will Huang <doggy.huang@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

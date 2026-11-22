@@ -2,6 +2,8 @@
 
 跨平台的 `say` 命令列語音合成（Text-to-Speech）工具，以 Rust 撰寫並採用 Microsoft Edge TTS（`msedge-tts`），高度相容 macOS 內建 `say` 的操作體驗，零外部執行期依賴（無需安裝 `ffmpeg`），預設語音為台灣繁體中文女聲 `zh-TW-HsiaoChenNeural`。
 
+官方網站（含語音試聽）：<https://say.gh.miniasp.com/>
+
 ## 功能特色
 
 - **跨平台原生效能**：以 Rust 編譯原生二進位檔，支援 macOS、Linux、Windows（含 x64 與 ARM64 共 6 大平台），透過薄型 npm 套件自動下載並驗證 SHA-256 校驗碼。
@@ -153,6 +155,16 @@ npm pack --dry-run
    - [`.github/workflows/release.yml`](.github/workflows/release.yml) 會於 6 個原生平台 runner 上編譯 `say`，打包為 `say-<target>.tar.xz` / `.zip` 並產生對應 `.sha256` 校驗檔，最後建立 GitHub Release 並上傳全部 12 個資產。
 3. GitHub Release 狀態轉為 `published` 後：
    - [`.github/workflows/npm-publish.yml`](.github/workflows/npm-publish.yml) 會自動對齊 `package.json` 版本，執行 `prepublishOnly`（`npm test`、`npm pack --dry-run` 以及 `node npm/prepublish-check.cjs` 驗證 6 平台共 12 個 Release 資產皆可下載），接著以 `npm publish --provenance --access public` 發佈 `@willh/say` 至 npm registry。
+
+## 官方網站
+
+[`site/`](site/) 是不需建置的純靜態網站（HTML、CSS、JavaScript），試聽音檔皆由本工具實際合成。推送到 `main` 且變更了 `site/**` 時，[`.github/workflows/pages.yml`](.github/workflows/pages.yml) 會自動部署到 GitHub Pages：<https://say.gh.miniasp.com/>。
+
+本機預覽（需透過 HTTP 開啟，音訊分析與時間軸才能運作）：
+
+```bash
+python -m http.server 8787 --directory site
+```
 
 ## 授權條款
 

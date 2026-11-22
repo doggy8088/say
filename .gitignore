@@ -9,3 +9,6 @@ dist/
 *.webm
 .DS_Store
 Thumbs.db
+
+# Website audio samples are part of the site
+!site/assets/audio/*.mp3

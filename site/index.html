@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>say：讓終端機開口說話的跨平台 TTS 指令</title>
+  <meta name="description" content="say 是跨平台的文字轉語音命令列工具，用法與 macOS 內建的 say 相容，可在 Windows、Linux、macOS 上執行，內建 300 多種 Microsoft Edge 神經語音，不需要安裝 ffmpeg。">
+  <link rel="canonical" href="https://say.gh.miniasp.com/">
+  <meta name="theme-color" content="#0F1B2D">
+  <meta name="color-scheme" content="dark">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://say.gh.miniasp.com/">
+  <meta property="og:site_name" content="say">
+  <meta property="og:title" content="say：讓終端機開口說話">
+  <meta property="og:description" content="跨平台、與 macOS say 相容的文字轉語音指令。300 多種神經語音，Windows、Linux、macOS 都能用。">
+  <meta property="og:image" content="https://say.gh.miniasp.com/assets/img/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="say：讓終端機，開口說話。npm install -g @willh/say">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@400..800&family=Recursive:wght,CASL,MONO@300..900,0..1,0..1&display=swap">
+  <link rel="preload" as="image" href="assets/img/hero-2048.webp" imagesrcset="assets/img/hero-800.webp 800w, assets/img/hero-1280.webp 1280w, assets/img/hero-2048.webp 2048w" imagesizes="100vw">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/app.js" defer></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "say",
+    "alternateName": "@willh/say",
+    "description": "Cross-platform text-to-speech CLI compatible with macOS say, powered by Microsoft Edge TTS.",
+    "url": "https://say.gh.miniasp.com/",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Windows, macOS, Linux",
+    "license": "https://opensource.org/licenses/MIT",
+    "softwareVersion": "0.1.0",
+    "downloadUrl": "https://github.com/doggy8088/say/releases",
+    "codeRepository": "https://github.com/doggy8088/say",
+    "author": { "@type": "Person", "name": "Will Huang" },
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip">跳到主要內容</a>
+
+  <header class="nav" id="nav">
+    <div class="wrap nav__inner">
+      <a class="brand" href="#top" data-i18n-aria="brandLabel" aria-label="say 首頁">
+        <img src="assets/img/logo-64.png" width="32" height="32" alt="">
+        <span translate="no">say</span>
+      </a>
+      <nav class="nav__links" data-i18n-aria="navLabel" aria-label="頁面導覽">
+        <a href="#voices" data-i18n="navVoices">試聽</a>
+        <a href="#macos" data-i18n="navMacos">相容性</a>
+        <a href="#install" data-i18n="navInstall">安裝</a>
+        <a href="#usage" data-i18n="navUsage">用法</a>
+        <a href="#options" data-i18n="navOptions">參數</a>
+      </nav>
+      <div class="nav__tools">
+        <button class="lang" id="lang-toggle" type="button" lang="en" aria-label="Switch to English">EN</button>
+        <a class="gh" href="https://github.com/doggy8088/say" data-i18n-aria="ghLabel" aria-label="在 GitHub 查看原始碼">
+          <svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Hero: the headline is the demo. Pressing play speaks it and marks each character as it is said, like `say -i`. -->
+    <section class="hero" id="top" aria-labelledby="hero-line">
+      <div class="hero__bg" aria-hidden="true">
+        <img src="assets/img/hero-2048.webp" srcset="assets/img/hero-800.webp 800w, assets/img/hero-1280.webp 1280w, assets/img/hero-2048.webp 2048w" sizes="100vw" width="2048" height="1152" alt="" fetchpriority="high">
+      </div>
+      <div class="wrap hero__inner">
+        <h1 class="hero__line speak" id="hero-line" data-clip="hero-zh">讓終端機，<br>開口說話。</h1>
+
+        <div class="hero__run">
+          <button class="btn btn--play" type="button" data-play="hero" aria-pressed="false">
+            <svg class="i-play" viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M6 3.8v12.4a1 1 0 0 0 1.52.85l10-6.2a1 1 0 0 0 0-1.7l-10-6.2A1 1 0 0 0 6 3.8Z"/></svg>
+            <svg class="i-stop" viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="4.5" y="4.5" width="11" height="11" rx="1.5" fill="currentColor"/></svg>
+            <span class="btn__label" data-i18n="heroPlay">播放這句</span>
+          </button>
+          <code translate="no" class="hero__cmd" id="hero-cmd"><span class="pr" aria-hidden="true">$</span> <span class="hero__cmd-text" data-i18n="heroCmd">say -i "讓終端機，開口說話。"</span></code>
+        </div>
+
+        <p class="hero__lead" data-i18n="heroLead"><strong>say</strong> 是跨平台的文字轉語音指令，用法和 macOS 內建的 say 一樣。Windows、Linux、macOS 都能執行，內建 300 多種 Microsoft Edge 神經語音，也不需要另外安裝 ffmpeg。</p>
+
+        <div class="install">
+          <code translate="no" class="install__cmd"><span class="pr" aria-hidden="true">$</span> npm install -g @willh/say</code>
+          <button class="copy" type="button" data-copy="npm install -g @willh/say" data-i18n="copy">複製</button>
+        </div>
+        <p class="hero__note" data-i18n="heroNote">需要 Node.js 18 以上。安裝時會下載你的平台對應的原生執行檔，並核對 <span class="nw">SHA-256</span>。</p>
+      </div>
+    </section>
+
+    <!-- Voices: a mixing-console row of channel strips, each with a live level meter. -->
+    <section class="section" id="voices" aria-labelledby="voices-title">
+      <div class="wrap">
+        <div class="section__head">
+          <h2 id="voices-title" data-i18n="voicesTitle">300 多種聲音，<wbr>先聽這八種</h2>
+          <p data-i18n="voicesLead">預設是台灣華語的 HsiaoChen。想換聲音，在 <code translate="no">-v</code> 後面打名稱的任一段就行，不分大小寫。</p>
+        </div>
+
+        <ul class="console">
+          <li class="strip" data-clip="zh-TW-HsiaoChen">
+            <div class="strip__top"><span class="led" aria-hidden="true"></span><span data-i18n="langZhTW">台灣華語</span><span class="strip__loc">zh-TW</span></div>
+            <h3 class="strip__name">HsiaoChen <span class="badge" data-i18n="default">預設</span></h3>
+            <p class="strip__gender" data-i18n="female">女聲</p>
+            <div class="meter" aria-hidden="true"></div>
+            <p class="strip__text speak" lang="zh-Hant-TW">早安！建置已經完成，所有測試都通過了。</p>
+            <div class="strip__foot">
+              <button class="play" type="button" data-play="zh-TW-HsiaoChen" aria-pressed="false" data-i18n-aria="playVoice" data-voice="HsiaoChen" aria-label="播放 HsiaoChen 的試聽">
+                <svg class="i-play" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M6 3.8v12.4a1 1 0 0 0 1.52.85l10-6.2a1 1 0 0 0 0-1.7l-10-6.2A1 1 0 0 0 6 3.8Z"/></svg>
+                <svg class="i-stop" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><rect x="4.5" y="4.5" width="11" height="11" rx="1.5" fill="currentColor"/></svg>
+              </button>
+              <code translate="no">say -v HsiaoChen</code>
+            </div>
+          </li>
+          <li class="strip" data-clip="zh-TW-YunJhe">
+            <div class="strip__top"><span class="led" aria-hidden="true"></span><span data-i18n="langZhTW">台灣華語</span><span class="strip__loc">zh-TW</span></div>
+            <h3 class="strip__name">YunJhe</h3>
+            <p class="strip__gender" data-i18n="male">男聲</p>
+            <div class="meter" aria-hidden="true"></div>
+            <p class="strip__text speak" lang="zh-Hant-TW">提醒你，十分鐘後要開站立會議。</p>
+            <div class="strip__foot">
+              <button class="play" type="button" data-play="zh-TW-YunJhe" aria-pressed="false" data-i18n-aria="playVoice" data-voice="YunJhe" aria-label="播放 YunJhe 的試聽">
+                <svg class="i-play" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M6 3.8v12.4a1 1 0 0 0 1.52.85l10-6.2a1 1 0 0 0 0-1.7l-10-6.2A1 1 0 0 0 6 3.8Z"/></svg>
+                <svg class="i-stop" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><rect x="4.5" y="4.5" width="11" height="11" rx="1.5" fill="currentColor"/></svg>
+              </button>
+              <code translate="no">say -v YunJhe</code>
+            </div>
+          </li>
+          <li class="strip" data-clip="zh-TW-HsiaoYu">
+            <div class="strip__top"><span class="led" aria-hidden="true"></span><span data-i18n="langZhTW">台灣華語</span><span class="strip__loc">zh-TW</span></div>
+            <h3 class="strip__name">HsiaoYu</h3>
+            <p class="strip__gender" data-i18n="female">女聲</p>
+            <div class="meter" aria-hidden="true"></div>
+            <p class="strip__text speak" lang="zh-Hant-TW">部署成功，網站已經上線囉！</p>
+            <div class="strip__foot">
+              <button class="play" type="button" data-play="zh-TW-HsiaoYu" aria-pressed="false" data-i18n-aria="playVoice" data-voice="HsiaoYu" aria-label="播放 HsiaoYu 的試聽">
+                <svg class="i-play" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M6 3.8v12.4a1 1 0 0 0 1.52.85l10-6.2a1 1 0 0 0 0-1.7l-10-6.2A1 1 0 0 0 6 3.8Z"/></svg>
+                <svg class="i-stop" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><rect x="4.5" y="4.5" width="11" height="11" rx="1.5" fill="currentColor"/></svg>
+              </button>
+              <code translate="no">say -v HsiaoYu</code>
+            </div>
+          </li>
+          <li class="strip" data-clip="en-US-Andrew">
+            <div class="strip__top"><span class="led" aria-hidden="true"></span><span data-i18n="langEnUS">美式英語</span><span class="strip__loc">en-US</span></div>
+            <h3 class="strip__name">Andrew</h3>
+            <p class="strip__gender" data-i18n="male">男聲</p>
+            <div class="meter" aria-hidden="true"></div>
+            <p class="strip__text speak" lang="en-US">Build finished in forty-two seconds. All tests passed.</p>
+            <div class="strip__foot">
+              <button class="play" type="button" data-play="en-US-Andrew" aria-pressed="false" data-i18n-aria="playVoice" data-voice="Andrew" aria-label="播放 Andrew 的試聽">
+                <svg class="i-play" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M6 3.8v12.4a1 1 0 0 0 1.52.85l10-6.2a1 1 0 0 0 0-1.7l-10-6.2A1 1 0 0 0 6 3.8Z"/></svg>
+                <svg class="i-stop" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><rect x="4.5" y="4.5" width="11" height="11" rx="1.5" fill="currentColor"/></svg>
+              </button>
+              <code translate="no">say -v en-US-AndrewNeural</code>
+            </div>
+          </li>
+          <li class="strip" data-clip="en-US-Ava">
+            <div class="strip__top"><span class="led" aria-hidden="true"></span><span data-i18n="langEnUS">美式英語</span><span class="strip__loc">en-US</span></div>
+            <h3 class="strip__name">Ava</h3>
+            <p class="strip__gender" data-i18n="female">女聲</p>
+            <div class="meter" aria-hidden="true"></div>
+            <p class="strip__text speak" lang="en-US">Heads up: your long-running job just completed.</p>
+            <div class="strip__foot">
+              <button class="play" type="button" data-play="en-US-Ava" aria-pressed="false" data-i18n-aria="playVoice" data-voice="Ava" aria-label="播放 Ava 的試聽">
+                <svg class="i-play" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M6 3.8v12.4a1 1 0 0 0 1.52.85l10-6.2a1 1 0 0 0 0-1.7l-10-6.2A1 1 0 0 0 6 3.8Z"/></svg>
+                <svg class="i-stop" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><rect x="4.5" y="4.5" width="11" height="11" rx="1.5" fill="currentColor"/></svg>
+              </button>
+              <code translate="no">say -v en-US-AvaNeural</code>
+            </div>
+          </li>
+          <li class="strip" data-clip="ja-JP-Nanami">
+            <div class="strip__top"><span class="led" aria-hidden="true"></span><span data-i18n="langJa">日語</span><span class="strip__loc">ja-JP</span></div>
+            <h3 class="strip__name">Nanami</h3>
+            <p class="strip__gender" data-i18n="female">女聲</p>
+            <div class="meter" aria-hidden="true"></div>
+            <p class="strip__text speak" lang="ja">ビルドが完了しました。お疲れさまでした。</p>
+            <div class="strip__foot">
+              <button class="play" type="button" data-play="ja-JP-Nanami" aria-pressed="false" data-i18n-aria="playVoice" data-voice="Nanami" aria-label="播放 Nanami 的試聽">
+                <svg class="i-play" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M6 3.8v12.4a1 1 0 0 0 1.52.85l10-6.2a1 1 0 0 0 0-1.7l-10-6.2A1 1 0 0 0 6 3.8Z"/></svg>
+                <svg class="i-stop" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><rect x="4.5" y="4.5" width="11" height="11" rx="1.5" fill="currentColor"/></svg>
+              </button>
+              <code translate="no">say -v Nanami</code>
+            </div>
+          </li>
+          <li class="strip" data-clip="ko-KR-SunHi">
+            <div class="strip__top"><span class="led" aria-hidden="true"></span><span data-i18n="langKo">韓語</span><span class="strip__loc">ko-KR</span></div>
+            <h3 class="strip__name">SunHi</h3>
+            <p class="strip__gender" data-i18n="female">女聲</p>
+            <div class="meter" aria-hidden="true"></div>
+            <p class="strip__text speak" lang="ko">배포가 완료되었습니다. 수고하셨습니다.</p>
+            <div class="strip__foot">
+              <button class="play" type="button" data-play="ko-KR-SunHi" aria-pressed="false" data-i18n-aria="playVoice" data-voice="SunHi" aria-label="播放 SunHi 的試聽">
+                <svg class="i-play" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M6 3.8v12.4a1 1 0 0 0 1.52.85l10-6.2a1 1 0 0 0 0-1.7l-10-6.2A1 1 0 0 0 6 3.8Z"/></svg>
+                <svg class="i-stop" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><rect x="4.5" y="4.5" width="11" height="11" rx="1.5" fill="currentColor"/></svg>
+              </button>
+              <code translate="no">say -v SunHi</code>
+            </div>
+          </li>
+          <li class="strip" data-clip="fr-FR-Denise">
+            <div class="strip__top"><span class="led" aria-hidden="true"></span><span data-i18n="langFr">法語</span><span class="strip__loc">fr-FR</span></div>
+            <h3 class="strip__name">Denise</h3>
+            <p class="strip__gender" data-i18n="female">女聲</p>
+            <div class="meter" aria-hidden="true"></div>
+            <p class="strip__text speak" lang="fr">La compilation est terminée. Bonne journée !</p>
+            <div class="strip__foot">
+              <button class="play" type="button" data-play="fr-FR-Denise" aria-pressed="false" data-i18n-aria="playVoice" data-voice="Denise" aria-label="播放 Denise 的試聽">
+                <svg class="i-play" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M6 3.8v12.4a1 1 0 0 0 1.52.85l10-6.2a1 1 0 0 0 0-1.7l-10-6.2A1 1 0 0 0 6 3.8Z"/></svg>
+                <svg class="i-stop" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><rect x="4.5" y="4.5" width="11" height="11" rx="1.5" fill="currentColor"/></svg>
+              </button>
+              <code translate="no">say -v fr-FR-DeniseNeural</code>
+            </div>
+          </li>
+        </ul>
+
+        <div class="voices__list">
+          <p data-i18n="voicesList">完整清單用 <code translate="no">-v "?"</code> 查詢，加上 <code translate="no">--locale</code> 可以只看某個語系：</p>
+          <div class="term">
+            <button class="copy copy--term" type="button" data-i18n="copy">複製</button>
+<pre translate="no"><code translate="no"><span class="pr">$</span> say <span class="fl">-v</span> "?" <span class="fl">--locale</span> zh-TW
+<span class="out">ShortName              Locale  Gender  FriendlyName
+---------------------  ------  ------  ------------
+zh-TW-HsiaoChenNeural  zh-TW   Female  Microsoft HsiaoChen Online (Natural) - Chinese (Taiwan)
+zh-TW-HsiaoYuNeural    zh-TW   Female  Microsoft HsiaoYu Online (Natural) - Chinese (Taiwanese Mandarin)
+zh-TW-YunJheNeural     zh-TW   Male    Microsoft YunJhe Online (Natural) - Chinese (Taiwan)</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- macOS compatibility: an honest flag-by-flag comparison. -->
+    <section class="section" id="macos" aria-labelledby="macos-title">
+      <div class="wrap split">
+        <div class="section__head split__head">
+          <h2 id="macos-title" data-i18n="macosTitle">從 macOS 換過來，<wbr>指令照舊</h2>
+          <p data-i18n="macosLead">參數名稱和行為都照著 macOS 的 say 設計，寫好的腳本拿到 Windows 或 Linux 也能直接跑。最大的差別是語音來自 Microsoft Edge 的線上服務，所以執行時需要網路。</p>
+        </div>
+
+        <div class="compat">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col" data-i18n="colFeature">功能</th>
+                <th scope="col">macOS say</th>
+                <th scope="col">@willh/say</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row"><span data-i18n="fSpeak">朗讀參數裡的文字</span><code translate="no">say "…"</code></th><td class="y"></td><td class="y"></td></tr>
+              <tr><th scope="row"><span data-i18n="fFile">從檔案或 stdin 讀取</span><code translate="no">-f, --input-file</code></th><td class="y"></td><td class="y"></td></tr>
+              <tr><th scope="row"><span data-i18n="fVoice">選擇語音</span><code translate="no">-v, --voice</code></th><td class="y"></td><td class="y"><span data-i18n="nVoice">可只打名稱片段</span></td></tr>
+              <tr><th scope="row"><span data-i18n="fRate">語速</span><code translate="no">-r, --rate</code></th><td class="y"><span>WPM</span></td><td class="y"><span data-i18n="nRate">WPM 或百分比</span></td></tr>
+              <tr><th scope="row"><span data-i18n="fOut">存成音訊檔</span><code translate="no">-o, --output-file</code></th><td class="y"><span>AIFF、CAF…</span></td><td class="y"><span>mp3、wav、ogg、webm</span></td></tr>
+              <tr><th scope="row"><span data-i18n="fFormat">指定檔案與資料格式</span><code translate="no">--file-format, --data-format</code></th><td class="y"></td><td class="y"></td></tr>
+              <tr><th scope="row"><span data-i18n="fDevice">指定輸出裝置</span><code translate="no">-a, --audio-device</code></th><td class="y"></td><td class="y"></td></tr>
+              <tr><th scope="row"><span data-i18n="fProgress">顯示進度</span><code translate="no">--progress</code></th><td class="y"></td><td class="y"></td></tr>
+              <tr><th scope="row"><span data-i18n="fInteractive">念到哪裡標到哪裡</span><code translate="no">-i, --interactive</code></th><td class="y"></td><td class="y"></td></tr>
+              <tr><th scope="row"><span data-i18n="fPitch">調整音調與音量</span><code translate="no">--pitch, --volume</code></th><td class="n"></td><td class="y"></td></tr>
+              <tr><th scope="row"><span data-i18n="fLocale">依語系列出語音</span><code translate="no">--locale</code></th><td class="n"></td><td class="y"></td></tr>
+              <tr><th scope="row"><span data-i18n="fNetwork">把音訊送到網路位址</span><code translate="no">-n, --network-send</code></th><td class="y"></td><td class="n"></td></tr>
+              <tr><th scope="row"><span data-i18n="fChannels">設定聲道、位元率、品質</span><code translate="no">--channels, --bit-rate, --quality</code></th><td class="y"></td><td class="n"></td></tr>
+              <tr><th scope="row"><span data-i18n="fOffline">離線使用</span></th><td class="y"></td><td class="n"><span data-i18n="nOffline">需要網路</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Install -->
+    <section class="section" id="install" aria-labelledby="install-title">
+      <div class="wrap install-grid">
+        <div>
+          <div class="section__head">
+            <h2 id="install-title" data-i18n="installTitle">安裝 say</h2>
+            <p data-i18n="installLead">用 npm 裝最省事。安裝腳本會依你的系統下載預先編譯好的執行檔並核對 <span class="nw">SHA-256</span>，電腦上不需要 Rust，也不需要 ffmpeg。</p>
+          </div>
+
+          <div class="tabs" data-tabs>
+            <div class="tabs__list" role="tablist" data-i18n-aria="installTabs" aria-label="安裝方式">
+              <button role="tab" type="button" id="tab-npm" aria-controls="panel-npm" aria-selected="true" data-i18n="tabNpm">npm 全域安裝</button>
+              <button role="tab" type="button" id="tab-npx" aria-controls="panel-npx" aria-selected="false" tabindex="-1" data-i18n="tabNpx">npx 免安裝</button>
+              <button role="tab" type="button" id="tab-cargo" aria-controls="panel-cargo" aria-selected="false" tabindex="-1" data-i18n="tabCargo">從原始碼編譯</button>
+              <button role="tab" type="button" id="tab-dl" aria-controls="panel-dl" aria-selected="false" tabindex="-1" data-i18n="tabDl">下載執行檔</button>
+            </div>
+
+            <div class="tabs__panel" role="tabpanel" id="panel-npm" aria-labelledby="tab-npm" tabindex="0">
+              <div class="term">
+                <button class="copy copy--term" type="button" data-i18n="copy">複製</button>
+<pre translate="no"><code translate="no"><span class="pr">$</span> npm install <span class="fl">-g</span> @willh/say
+<span class="pr">$</span> <span data-i18n="cHello">say "你好世界"</span></code></pre>
+              </div>
+            </div>
+            <div class="tabs__panel" role="tabpanel" id="panel-npx" aria-labelledby="tab-npx" tabindex="0">
+              <div class="term">
+                <button class="copy copy--term" type="button" data-i18n="copy">複製</button>
+<pre translate="no"><code translate="no"><span class="pr">$</span> <span data-i18n="cNpx">npx @willh/say "你好，這是跨平台的 say！"</span></code></pre>
+              </div>
+            </div>
+            <div class="tabs__panel" role="tabpanel" id="panel-cargo" aria-labelledby="tab-cargo" tabindex="0">
+              <div class="term">
+                <button class="copy copy--term" type="button" data-i18n="copy">複製</button>
+<pre translate="no"><code translate="no"><span class="cm" data-i18n="cAlsa"># Linux 要先裝 ALSA 開發標頭</span>
+<span class="pr">$</span> sudo apt-get install <span class="fl">-y</span> libasound2-dev pkg-config
+<span class="pr">$</span> cargo install <span class="fl">--git</span> https://github.com/doggy8088/say</code></pre>
+              </div>
+            </div>
+            <div class="tabs__panel" role="tabpanel" id="panel-dl" aria-labelledby="tab-dl" tabindex="0">
+              <p class="panel-text" data-i18n="dlText">每個版本都附上六個平台的壓縮檔和 <code translate="no">.sha256</code> 校驗檔。解壓縮後，把 <code translate="no">say</code> 放進 <code translate="no">PATH</code> 裡的任一個資料夾就能用。</p>
+              <a class="btn btn--ghost" href="https://github.com/doggy8088/say/releases/latest" data-i18n="dlButton">前往 GitHub Releases 下載</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="platforms">
+          <h3 data-i18n="platformsTitle">預先編譯的平台</h3>
+          <dl>
+            <div><dt>macOS <span data-i18n="pAppleSilicon">Apple 晶片</span></dt><dd>aarch64-apple-darwin</dd></div>
+            <div><dt>macOS Intel</dt><dd>x86_64-apple-darwin</dd></div>
+            <div><dt>Linux x64</dt><dd>x86_64-unknown-linux-gnu</dd></div>
+            <div><dt>Linux ARM64</dt><dd>aarch64-unknown-linux-gnu</dd></div>
+            <div><dt>Windows x64</dt><dd>x86_64-pc-windows-msvc</dd></div>
+            <div><dt>Windows ARM64</dt><dd>aarch64-pc-windows-msvc</dd></div>
+          </dl>
+          <p class="platforms__note" data-i18n="platformsNote">其他平台可以裝好 Rust 後自行編譯。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Usage recipes -->
+    <section class="section" id="usage" aria-labelledby="usage-title">
+      <div class="wrap">
+        <div class="section__head">
+          <h2 id="usage-title" data-i18n="usageTitle">常用指令</h2>
+          <p data-i18n="usageLead">從最簡單的一句話，到建置完成時出聲提醒你。</p>
+        </div>
+
+        <div class="recipes">
+          <article class="recipe">
+            <h3 data-i18n="rSpeakT">念一段文字</h3>
+            <p data-i18n="rSpeakP">多個參數會用空白接起來；什麼都不給的話，就逐行念出你打的字，按 Ctrl+D 結束。</p>
+            <div class="term">
+              <button class="copy copy--term" type="button" data-i18n="copy">複製</button>
+<pre translate="no"><code translate="no" data-i18n="rSpeakC"><span class="pr">$</span> say "早安，今天天氣真好！"
+<span class="pr">$</span> say Hello from cross-platform say</code></pre>
+            </div>
+          </article>
+
+          <article class="recipe">
+            <h3 data-i18n="rBuildT">建置完成時出聲提醒</h3>
+            <p data-i18n="rBuildP">把 say 接在長時間的指令後面，就不用一直盯著畫面。</p>
+            <div class="term">
+              <button class="copy copy--term" type="button" data-i18n="copy">複製</button>
+<pre translate="no"><code translate="no" data-i18n="rBuildC"><span class="pr">$</span> npm run build &amp;&amp; say "建置完成" || say "建置失敗"
+<span class="pr">$</span> git log <span class="fl">-1</span> <span class="fl">--pretty</span>=%s | say</code></pre>
+            </div>
+          </article>
+
+          <article class="recipe">
+            <h3 data-i18n="rVoiceT">換一種聲音</h3>
+            <p data-i18n="rVoiceP">完整名稱或名稱片段都可以。用環境變數 <code translate="no">SAY_VOICE</code> 可以改掉預設語音。</p>
+            <div class="term">
+              <button class="copy copy--term" type="button" data-i18n="copy">複製</button>
+<pre translate="no"><code translate="no" data-i18n="rVoiceC"><span class="pr">$</span> say <span class="fl">-v</span> YunJhe "歡迎使用 say"
+<span class="pr">$</span> SAY_VOICE=en-US-JennyNeural say "Hello there"</code></pre>
+            </div>
+          </article>
+
+          <article class="recipe recipe--rate">
+            <h3 data-i18n="rRateT">調整語速</h3>
+            <p data-i18n="rRateP">帶 <code translate="no">%</code> 或正負號的是百分比；純數字當成 macOS 的 WPM，175 WPM 等於 <code translate="no">+0%</code>。拖拉看看兩種寫法怎麼對應：</p>
+            <div class="rate">
+              <label class="rate__label" for="wpm"><span data-i18n="rRateLabel">macOS 語速</span> <output id="wpm-out" for="wpm">210 WPM</output></label>
+              <input type="range" id="wpm" min="60" max="400" step="5" value="210">
+              <div class="term">
+<pre translate="no"><code translate="no"><span class="pr">$</span> say <span class="fl">-r</span> <span id="rate-wpm">210</span> <span data-i18n="rRateText1">"念快一點"</span>
+<span class="pr">$</span> say <span class="fl">-r</span> <span id="rate-pct">+20%</span> <span data-i18n="rRateText2">"效果完全一樣"</span></code></pre>
+              </div>
+            </div>
+          </article>
+
+          <article class="recipe">
+            <h3 data-i18n="rPitchT">調整音調與音量</h3>
+            <p data-i18n="rPitchP">音調用 Hz，音量用百分比，都可以是負數。</p>
+            <div class="term">
+              <button class="copy copy--term" type="button" data-i18n="copy">複製</button>
+<pre translate="no"><code translate="no" data-i18n="rPitchC"><span class="pr">$</span> say <span class="fl">--pitch</span> +10Hz <span class="fl">--volume</span> +15% "提高音調、放大音量"
+<span class="pr">$</span> say <span class="fl">--pitch</span> -8Hz <span class="fl">--volume</span> -30% "低沉一點、小聲一點"</code></pre>
+            </div>
+          </article>
+
+          <article class="recipe">
+            <h3 data-i18n="rSaveT">存成音訊檔</h3>
+            <p data-i18n="rSaveP">加上 <code translate="no">-o</code> 就不播放，改存檔。格式依副檔名決定，支援 mp3、wav、ogg、webm。</p>
+            <div class="term">
+              <button class="copy copy--term" type="button" data-i18n="copy">複製</button>
+<pre translate="no"><code translate="no" data-i18n="rSaveC"><span class="pr">$</span> say <span class="fl">-o</span> greeting.mp3 "這段會存成 MP3"
+<span class="pr">$</span> say <span class="fl">-o</span> notice.wav <span class="fl">-r</span> +10% "這段會存成 WAV"</code></pre>
+            </div>
+          </article>
+
+          <article class="recipe">
+            <h3 data-i18n="rPipeT">從檔案或管線讀取</h3>
+            <p data-i18n="rPipeP">長文章會自動切段合成，再接成同一段音訊。</p>
+            <div class="term">
+              <button class="copy copy--term" type="button" data-i18n="copy">複製</button>
+<pre translate="no"><code translate="no"><span class="pr">$</span> say <span class="fl">-f</span> article.txt
+<span class="pr">$</span> echo "Hello from a pipe" | say <span class="fl">-v</span> Ava</code></pre>
+            </div>
+          </article>
+
+          <article class="recipe">
+            <h3 data-i18n="rDeviceT">指定播放裝置</h3>
+            <p data-i18n="rDeviceP">先列出裝置，再用編號或名稱開頭指定。</p>
+            <div class="term">
+              <button class="copy copy--term" type="button" data-i18n="copy">複製</button>
+<pre translate="no"><code translate="no" data-i18n="rDeviceC"><span class="pr">$</span> say <span class="fl">-a</span> "?"
+<span class="pr">$</span> say <span class="fl">-a</span> 0 "用第 0 號裝置播放"</code></pre>
+            </div>
+          </article>
+
+          <article class="recipe">
+            <h3 data-i18n="rHiT">邊念邊標示</h3>
+            <p data-i18n="rHiP"><code translate="no">-i</code> 會在終端機裡把念到的字反白，也可以指定顏色；<code translate="no">--progress</code> 顯示進度條。</p>
+            <div class="term">
+              <button class="copy copy--term" type="button" data-i18n="copy">複製</button>
+<pre translate="no"><code translate="no" data-i18n="rHiC"><span class="pr">$</span> say <span class="fl">-i</span> "預設用反白標示"
+<span class="pr">$</span> say <span class="fl">--interactive=green</span> "改用綠色標示"
+<span class="pr">$</span> say <span class="fl">--progress</span> "顯示合成與播放進度"</code></pre>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Options reference -->
+    <section class="section" id="options" aria-labelledby="options-title">
+      <div class="wrap">
+        <div class="section__head">
+          <h2 id="options-title" data-i18n="optionsTitle">全部參數</h2>
+          <p data-i18n="optionsLead">在終端機裡執行 <code translate="no">say --help</code> 也看得到。</p>
+        </div>
+        <div class="opts">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col" data-i18n="oColOpt">參數</th>
+                <th scope="col" data-i18n="oColDef">預設值</th>
+                <th scope="col" data-i18n="oColDesc">說明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row"><code translate="no">[MESSAGE]...</code></th><td class="def none">—</td><td data-i18n="oMsg">要念的文字，多個參數以空白連接。沒給文字也沒指定 <code translate="no">-f</code> 時，改從 stdin 讀取。</td></tr>
+              <tr><th scope="row"><code translate="no">-v, --voice &lt;VOICE&gt;</code></th><td class="def"><code translate="no">zh-TW-HsiaoChenNeural</code></td><td data-i18n="oVoice">語音名稱，完整 ShortName 或名稱片段都行，也可用 <code translate="no">SAY_VOICE</code> 環境變數設定。傳入 <code translate="no">?</code> 列出所有語音。</td></tr>
+              <tr><th scope="row"><code translate="no">--list-voices</code></th><td class="def none">—</td><td data-i18n="oList">列出所有語音，效果同 <code translate="no">-v "?"</code>。</td></tr>
+              <tr><th scope="row"><code translate="no">--locale &lt;LOCALE&gt;</code></th><td class="def none">—</td><td data-i18n="oLocale">依語系前綴篩選語音清單，例如 <code translate="no">zh-TW</code>、<code translate="no">en-US</code>、<code translate="no">ja</code>。</td></tr>
+              <tr><th scope="row"><code translate="no">-r, --rate &lt;RATE&gt;</code></th><td class="def"><code translate="no">+0%</code></td><td data-i18n="oRate">語速。<code translate="no">+20%</code>、<code translate="no">-15%</code> 是百分比（-100 到 200）；<code translate="no">200</code>、<code translate="no">120</code> 這類純數字是 WPM，175 WPM 等於 0%。</td></tr>
+              <tr><th scope="row"><code translate="no">--pitch &lt;PITCH&gt;</code></th><td class="def"><code translate="no">+0Hz</code></td><td data-i18n="oPitch">音調，例如 <code translate="no">+10Hz</code>、<code translate="no">-5Hz</code>。</td></tr>
+              <tr><th scope="row"><code translate="no">--volume &lt;VOLUME&gt;</code></th><td class="def"><code translate="no">+0%</code></td><td data-i18n="oVolume">音量，例如 <code translate="no">+20%</code>、<code translate="no">-30%</code>。</td></tr>
+              <tr><th scope="row"><code translate="no">-o, --output-file &lt;FILE&gt;</code></th><td class="def none">—</td><td data-i18n="oOut">不播放，改存成音訊檔，格式依副檔名決定。</td></tr>
+              <tr><th scope="row"><code translate="no">--file-format &lt;FORMAT&gt;</code></th><td class="def" data-i18n="oFileFmtDef">依副檔名</td><td data-i18n="oFileFmt"><code translate="no">mp3</code>、<code translate="no">wav</code>、<code translate="no">ogg</code> 或 <code translate="no">webm</code>。傳入 <code translate="no">?</code> 列出支援的格式。</td></tr>
+              <tr><th scope="row"><code translate="no">--data-format &lt;FORMAT&gt;</code></th><td class="def none">—</td><td data-i18n="oDataFmt">Edge TTS 原生的 <code translate="no">audio_format</code> 字串，例如 <code translate="no">audio-24khz-96kbitrate-mono-mp3</code>。傳入 <code translate="no">?</code> 列出清單。</td></tr>
+              <tr><th scope="row"><code translate="no">-f, --input-file &lt;FILE&gt;</code></th><td class="def none">—</td><td data-i18n="oFile">從檔案讀取文字；<code translate="no">-</code> 代表 stdin。</td></tr>
+              <tr><th scope="row"><code translate="no">-a, --audio-device &lt;DEVICE&gt;</code></th><td class="def" data-i18n="oDeviceDef">系統預設</td><td data-i18n="oDevice">輸出裝置的編號或名稱開頭（不分大小寫）。傳入 <code translate="no">?</code> 列出裝置。</td></tr>
+              <tr><th scope="row"><code translate="no">--progress</code></th><td class="def" data-i18n="off">關閉</td><td data-i18n="oProgress">在 stderr 顯示合成與播放進度。</td></tr>
+              <tr><th scope="row"><code translate="no">-i, --interactive[=MARKUP]</code></th><td class="def" data-i18n="off">關閉</td><td data-i18n="oInteractive">播放時在終端機標示念到的字。可指定 <code translate="no">bold</code>、<code translate="no">smul</code>、<code translate="no">smso</code>、顏色名稱，或用 <code translate="no">yellow/blue</code> 指定前景與背景。</td></tr>
+              <tr><th scope="row"><code translate="no">-h, --help</code></th><td class="def none">—</td><td data-i18n="oHelp">顯示說明。</td></tr>
+              <tr><th scope="row"><code translate="no">-V, --version</code></th><td class="def none">—</td><td data-i18n="oVersion">顯示版本。</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Closing -->
+    <section class="close" aria-labelledby="close-title">
+      <div class="wrap">
+        <h2 id="close-title" data-i18n="closeTitle">裝好之後，<wbr>先讓它跟你打聲招呼</h2>
+        <div class="term term--close">
+          <button class="copy copy--term" type="button" data-i18n="copy">複製</button>
+<pre translate="no"><code translate="no"><span class="pr">$</span> npm install <span class="fl">-g</span> @willh/say
+<span class="pr">$</span> <span data-i18n="cHi">say "你好，很高興認識你"</span></code></pre>
+        </div>
+        <div class="close__links">
+          <a class="btn btn--ghost" href="https://github.com/doggy8088/say" data-i18n="closeGh">在 GitHub 查看原始碼</a>
+          <a class="btn btn--ghost" href="https://www.npmjs.com/package/@willh/say" data-i18n="closeNpm">在 npm 查看套件</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__inner">
+      <a class="brand brand--small" href="#top" data-i18n-aria="brandTop" aria-label="回到頁首">
+        <img src="assets/img/logo-64.png" width="24" height="24" alt="" loading="lazy">
+        <span translate="no">say</span>
+      </a>
+      <p data-i18n="footerText">MIT 授權，© 2026 Will Huang。語音由 Microsoft Edge TTS 提供，本專案與 Microsoft 無關。</p>
+      <nav class="footer__links" data-i18n-aria="footerNav" aria-label="相關連結">
+        <a href="https://github.com/doggy8088/say">GitHub</a>
+        <a href="https://www.npmjs.com/package/@willh/say">npm</a>
+        <a href="https://github.com/doggy8088/say/releases" data-i18n="fReleases">版本紀錄</a>
+        <a href="https://github.com/doggy8088/say/issues" data-i18n="fIssues">回報問題</a>
+      </nav>
+    </div>
+  </footer>
+
+  <div class="sr-only" aria-live="polite" id="live"></div>
+</body>
+</html>

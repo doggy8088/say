@@ -50,8 +50,8 @@ test('formats artifact names for all 6 targets and release base URLs', () => {
   assert.equal(artifactName('aarch64-unknown-linux-gnu'), 'say-aarch64-unknown-linux-gnu.tar.xz');
   assert.equal(artifactName('x86_64-pc-windows-msvc'), 'say-x86_64-pc-windows-msvc.zip');
   assert.equal(artifactName('aarch64-pc-windows-msvc'), 'say-aarch64-pc-windows-msvc.zip');
-  assert.equal(releaseBaseUrl('0.1.0'), 'https://github.com/doggy8088/say/releases/download/v0.1.0');
-  assert.equal(releaseBaseUrl('1.2.3'), 'https://github.com/doggy8088/say/releases/download/v1.2.3');
+  assert.equal(releaseBaseUrl('0.1.0'), 'https://say.gh.miniasp.com/releases/download/v0.1.0');
+  assert.equal(releaseBaseUrl('1.2.3'), 'https://say.gh.miniasp.com/releases/download/v1.2.3');
 });
 
 test('verifies sha256 checksums for valid, mismatched, and malformed inputs', () => {
@@ -100,12 +100,12 @@ test('finds extracted binary at root, nested directory, or throws when missing',
 test('prepublish check builds and validates all 12 release asset URLs', async () => {
   const urls = expectedReleaseUrls('0.1.0');
   assert.equal(urls.length, 12);
-  assert.ok(urls.includes('https://github.com/doggy8088/say/releases/download/v0.1.0/say-aarch64-apple-darwin.tar.xz'));
-  assert.ok(urls.includes('https://github.com/doggy8088/say/releases/download/v0.1.0/say-aarch64-apple-darwin.tar.xz.sha256'));
-  assert.ok(urls.includes('https://github.com/doggy8088/say/releases/download/v0.1.0/say-aarch64-unknown-linux-gnu.tar.xz'));
-  assert.ok(urls.includes('https://github.com/doggy8088/say/releases/download/v0.1.0/say-aarch64-unknown-linux-gnu.tar.xz.sha256'));
-  assert.ok(urls.includes('https://github.com/doggy8088/say/releases/download/v0.1.0/say-aarch64-pc-windows-msvc.zip'));
-  assert.ok(urls.includes('https://github.com/doggy8088/say/releases/download/v0.1.0/say-aarch64-pc-windows-msvc.zip.sha256'));
+  assert.ok(urls.includes('https://say.gh.miniasp.com/releases/download/v0.1.0/say-aarch64-apple-darwin.tar.xz'));
+  assert.ok(urls.includes('https://say.gh.miniasp.com/releases/download/v0.1.0/say-aarch64-apple-darwin.tar.xz.sha256'));
+  assert.ok(urls.includes('https://say.gh.miniasp.com/releases/download/v0.1.0/say-aarch64-unknown-linux-gnu.tar.xz'));
+  assert.ok(urls.includes('https://say.gh.miniasp.com/releases/download/v0.1.0/say-aarch64-unknown-linux-gnu.tar.xz.sha256'));
+  assert.ok(urls.includes('https://say.gh.miniasp.com/releases/download/v0.1.0/say-aarch64-pc-windows-msvc.zip'));
+  assert.ok(urls.includes('https://say.gh.miniasp.com/releases/download/v0.1.0/say-aarch64-pc-windows-msvc.zip.sha256'));
 
   const okUrls = await verifyReleaseAssets({
     version: '0.1.0',

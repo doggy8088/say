@@ -59,8 +59,12 @@ function artifactName(target) {
   return `${BINARY_NAME}-${target}.${ext}`;
 }
 
+// The source repository is private, so its GitHub Releases can't be downloaded anonymously.
+// The website mirrors every release under the same path layout (see .github/workflows/pages.yml).
+const DOWNLOAD_BASE = 'https://say.gh.miniasp.com/releases/download';
+
 function releaseBaseUrl(version = packageVersion()) {
-  return `https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/releases/download/v${version}`;
+  return `${DOWNLOAD_BASE}/v${version}`;
 }
 
 function sha256(path) {

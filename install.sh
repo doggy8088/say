@@ -115,6 +115,14 @@ download() {
   fi
 }
 
+fetch_text() {
+  if has curl; then
+    curl --proto '=https' --tlsv1.2 --fail --silent --show-error --location --retry 3 "$1"
+  else
+    wget -q -O - "$1"
+  fi
+}
+
 sha256_of() {
   if has sha256sum; then
     sha256sum "$1" | awk '{ print $1 }'
@@ -220,20 +228,26 @@ main() {
     */) install_dir=${install_dir%/} ;;
   esac
 
-  case "$version" in
-    "" | latest)
-      version="latest"
-      base="https://github.com/$REPO/releases/latest/download"
-      ;;
-    v*) base="https://github.com/$REPO/releases/download/$version" ;;
-    *)
-      version="v$version"
-      base="https://github.com/$REPO/releases/download/$version"
-      ;;
-  esac
-
   detect_target
   check_tools
+
+  # Release files are mirrored on the website under the same layout as GitHub Releases.
+  # "latest" is resolved to a tag first, so an archive and its checksum always come from
+  # the same release, even while a cache still holds the previous one.
+  case "$version" in
+    "" | latest)
+      latest=$(fetch_text "$SITE/releases/latest.txt") ||
+        die "could not look up the latest release at $SITE/releases/latest.txt"
+      version=$(printf '%s' "$latest" | tr -d ' \r\n')
+      case "$version" in
+        v[0-9]*) ;;
+        *) die "$SITE/releases/latest.txt does not hold a release tag" ;;
+      esac
+      ;;
+    v*) ;;
+    *) version="v$version" ;;
+  esac
+  base="$SITE/releases/download/$version"
 
   asset="say-$TARGET.tar.xz"
   info "Installing ${BOLD}say${RESET} ($version, $TARGET) into $install_dir"

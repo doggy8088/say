@@ -126,17 +126,26 @@ function Install-Say {
         Write-Verbose 'Could not enable TLS 1.2; continuing with the defaults.'
     }
 
-    $repo = 'doggy8088/say'
+    $site = 'https://say.gh.miniasp.com'
     $target = Get-SayTarget
     $asset = "say-$target.zip"
 
+    # Release files are mirrored on the website under the same layout as GitHub Releases.
+    # "latest" is resolved to a tag first, so the archive and its checksum always come
+    # from the same release, even while a cache still holds the previous one.
     if (-not $Version -or $Version -eq 'latest') {
-        $Version = 'latest'
-        $base = "https://github.com/$repo/releases/latest/download"
-    } else {
-        if ($Version -notmatch '^v') { $Version = "v$Version" }
-        $base = "https://github.com/$repo/releases/download/$Version"
+        try {
+            $Version = ([string](Invoke-WebRequest -Uri "$site/releases/latest.txt" -UseBasicParsing).Content).Trim()
+        } catch {
+            throw "Could not look up the latest release at $site/releases/latest.txt. ($($_.Exception.Message))"
+        }
+        if ($Version -notmatch '^v\d') {
+            throw "$site/releases/latest.txt does not hold a release tag."
+        }
+    } elseif ($Version -notmatch '^v') {
+        $Version = "v$Version"
     }
+    $base = "$site/releases/download/$Version"
 
     if (-not $InstallDir) { $InstallDir = Join-Path $HOME '.local\bin' }
     $InstallDir = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($InstallDir).TrimEnd('\')

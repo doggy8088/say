@@ -22,10 +22,12 @@ jobs:
             os: macos-15-intel
             ext: tar.xz
           - target: x86_64-unknown-linux-gnu
-            os: ubuntu-latest
+            # Linux binaries need the glibc they were built against or newer, so build on
+            # Ubuntu 22.04 (glibc 2.35) to run on Ubuntu 22.04, Debian 12 and later.
+            os: ubuntu-22.04
             ext: tar.xz
           - target: aarch64-unknown-linux-gnu
-            os: ubuntu-24.04-arm
+            os: ubuntu-22.04-arm
             ext: tar.xz
           - target: x86_64-pc-windows-msvc
             os: windows-latest
@@ -43,6 +45,17 @@ jobs:
         with:
           targets: ${{ matrix.target }}
       - run: cargo build --release --locked --target ${{ matrix.target }}
+      - name: Check glibc requirement (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          need=$(objdump -T "target/${{ matrix.target }}/release/say" | grep -o 'GLIBC_[0-9.]*' | sed 's/^GLIBC_//' | sort -uV | tail -1)
+          echo "say needs glibc $need or later"
+          if [[ "$(printf '%s\n2.35\n' "$need" | sort -V | tail -1)" != "2.35" ]]; then
+            echo "::error::say needs glibc $need, which is newer than Ubuntu 22.04's 2.35"
+            exit 1
+          fi
       - name: Package binary (Unix)
         if: runner.os != 'Windows'
         shell: bash

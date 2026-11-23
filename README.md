@@ -32,7 +32,7 @@ say "Hello from cross-platform say!"
 npx @willh/say "你好，這是跨平台 say 工具！"
 ```
 
-> 安裝時 `postinstall` 會從 [GitHub Releases](https://github.com/doggy8088/say/releases) 下載對應平台的原生二進位壓縮檔，並強制執行 SHA-256 校驗碼驗證。
+> 安裝時 `postinstall` 會從官方網站（<https://say.gh.miniasp.com/releases/>，內容與 GitHub Releases 相同）下載對應平台的原生二進位壓縮檔，並強制執行 SHA-256 校驗碼驗證。
 
 ### 一行指令安裝（不需要 Node.js）
 
@@ -48,7 +48,7 @@ Windows（PowerShell）：
 irm https://say.gh.miniasp.com/install.ps1 | iex
 ```
 
-安裝腳本會從 GitHub Releases 下載對應平台的執行檔、核對 SHA-256，再放進 `~/.local/bin`（Windows 是 `%USERPROFILE%\.local\bin`）。Windows 會自動把這個資料夾加進使用者的 `PATH`；macOS 與 Linux 如果還沒把它加進 `PATH`，腳本會印出要加的那一行指令。
+安裝腳本會從官方網站下載對應平台的執行檔、核對 SHA-256，再放進 `~/.local/bin`（Windows 是 `%USERPROFILE%\.local\bin`）。Windows 會自動把這個資料夾加進使用者的 `PATH`；macOS 與 Linux 如果還沒把它加進 `PATH`，腳本會印出要加的那一行指令。
 
 可以用環境變數調整安裝方式：
 
@@ -151,7 +151,7 @@ say --interactive=green "Highlighting spoken words in green."
 | `win32-x64` | `x86_64-pc-windows-msvc` | `.zip` |
 | `win32-arm64` | `aarch64-pc-windows-msvc` | `.zip` |
 
-若在清單以外的平台使用，可安裝 Rust 工具鏈後從原始碼編譯。Linux 預編譯版需要 glibc 2.38 以上（例如 Ubuntu 24.04 以後）；較舊的發行版（例如 Ubuntu 22.04）請從原始碼編譯。
+若在清單以外的平台使用，可安裝 Rust 工具鏈後從原始碼編譯。Linux 預編譯版需要 glibc 2.35 以上（例如 Ubuntu 22.04、Debian 12 以後）；更舊的發行版請從原始碼編譯。
 
 ## 本機開發與測試
 
@@ -183,17 +183,19 @@ npm pack --dry-run
 
 ## 發佈流程（GitHub Actions）
 
-本專案採用自動化 Release 與 npm 發佈管線：
+本專案採用自動化 Release 與 npm 發佈管線。原始碼儲存庫是私有的，GitHub Releases 無法匿名下載，所以執行檔改由官方網站對外提供：
 
-1. 同步更新 `Cargo.toml` 與 `package.json` 版本號並提交變更。
-2. 推送版本標籤（例如 `git tag v0.1.0 && git push origin v0.1.0`）：
-   - [`.github/workflows/release.yml`](.github/workflows/release.yml) 會於 6 個原生平台 runner 上編譯 `say`，打包為 `say-<target>.tar.xz` / `.zip` 並產生對應 `.sha256` 校驗檔，最後建立 GitHub Release 並上傳全部 12 個資產。
-3. GitHub Release 狀態轉為 `published` 後：
-   - [`.github/workflows/npm-publish.yml`](.github/workflows/npm-publish.yml) 會自動對齊 `package.json` 版本，執行 `prepublishOnly`（`npm test`、`npm pack --dry-run` 以及 `node npm/prepublish-check.cjs` 驗證 6 平台共 12 個 Release 資產皆可下載），接著以 `npm publish --provenance --access public` 發佈 `@willh/say` 至 npm registry。
+1. 同步更新 `Cargo.toml`、`Cargo.lock` 與 `package.json` 版本號並提交變更。
+2. 推送版本標籤（例如 `git tag v0.1.1 && git push origin v0.1.1`）：
+   - [`.github/workflows/release.yml`](.github/workflows/release.yml) 會於 6 個原生平台 runner 上編譯 `say`（Linux 版在 Ubuntu 22.04 上編譯，並檢查所需的 glibc 不超過 2.35），打包為 `say-<target>.tar.xz` / `.zip` 並產生對應 `.sha256` 校驗檔，最後建立 GitHub Release 並上傳全部 12 個資產。
+3. Release 完成後：
+   - [`.github/workflows/pages.yml`](.github/workflows/pages.yml) 會重新部署網站，把所有版本的 Release 資產鏡像到 `https://say.gh.miniasp.com/releases/download/<tag>/`，並以 `releases/latest.txt` 記錄最新版本。安裝腳本與 npm 套件都從這裡下載。
+4. 網站部署完成後：
+   - [`.github/workflows/npm-publish.yml`](.github/workflows/npm-publish.yml) 會取出最新 Release 的標籤、對齊版本，執行 `prepublishOnly`（`npm test`、`npm pack --dry-run` 以及 `node npm/prepublish-check.cjs` 驗證網站上 6 平台共 12 個資產皆可下載），接著以 `npm publish --access public` 發佈 `@willh/say`。已發佈過的版本會自動略過；也可以用 `gh workflow run npm-publish.yml` 手動執行。私有儲存庫無法產生 npm provenance，所以發佈時不帶 `--provenance`。
 
 ## 官方網站
 
-[`site/`](site/) 是不需建置的純靜態網站（HTML、CSS、JavaScript），試聽音檔皆由本工具實際合成。推送到 `main` 且變更了 `site/**` 時，[`.github/workflows/pages.yml`](.github/workflows/pages.yml) 會自動部署到 GitHub Pages：<https://say.gh.miniasp.com/>。部署時也會把根目錄的 `install.sh`、`install.ps1` 複製到網站根目錄，所以修改這兩支腳本同樣會觸發部署。
+[`site/`](site/) 是不需建置的純靜態網站（HTML、CSS、JavaScript），試聽音檔皆由本工具實際合成。推送到 `main` 且變更了 `site/**` 時，[`.github/workflows/pages.yml`](.github/workflows/pages.yml) 會自動部署到 GitHub Pages：<https://say.gh.miniasp.com/>。部署時也會把根目錄的 `install.sh`、`install.ps1` 複製到網站根目錄（修改這兩支腳本同樣會觸發部署）、把 Release 資產鏡像到 `releases/`，並以 [`scripts/stamp-assets.mjs`](scripts/stamp-assets.mjs) 替資源網址加上內容雜湊，避免瀏覽器快取到舊的 CSS 或 JavaScript。
 
 本機預覽（需透過 HTTP 開啟，音訊分析與時間軸才能運作）：
 

@@ -12,3 +12,8 @@ Thumbs.db
 
 # Website audio samples are part of the site
 !site/assets/audio/*.mp3
+
+# Release downloads mirrored into the website at deploy time (.github/workflows/pages.yml)
+site/releases/
+site/install.sh
+site/install.ps1

@@ -9,6 +9,10 @@ on:
       - "install.ps1"
       - "scripts/stamp-assets.mjs"
       - ".github/workflows/pages.yml"
+  # Redeploy after every release so the site mirrors its downloads.
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -22,6 +26,7 @@ concurrency:
 
 jobs:
   deploy:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -32,6 +37,26 @@ jobs:
       # Serve the installers at https://say.gh.miniasp.com/install.sh and /install.ps1.
       - name: Add install scripts
         run: cp install.sh install.ps1 site/
+      # The repository is private, so its GitHub Releases can't be downloaded anonymously.
+      # Mirror every release onto the site with the same layout as GitHub:
+      #   /releases/download/<tag>/<asset>   what the install scripts and npm package fetch
+      #   /releases/latest.txt               the newest tag, which the install scripts read
+      #   /releases/latest/download/<asset>  stable links for the site's download buttons
+      - name: Mirror release downloads
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tags=$(gh release list --repo "$GITHUB_REPOSITORY" --limit 100 --json tagName,isDraft \
+            --jq '.[] | select(.isDraft | not) | .tagName')
+          for tag in $tags; do
+            gh release download "$tag" --repo "$GITHUB_REPOSITORY" --dir "site/releases/download/$tag"
+          done
+          latest=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName)
+          mkdir -p site/releases/latest/download
+          cp "site/releases/download/$latest/"* site/releases/latest/download/
+          printf '%s\n' "$latest" > site/releases/latest.txt
+          echo "Mirrored: $(echo $tags); latest: $latest"
       # Version every asset URL by content hash, so browsers never mix a new page
       # with a stylesheet or script cached from the previous deploy.
       - name: Version asset URLs

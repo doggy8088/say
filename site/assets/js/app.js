@@ -35,7 +35,7 @@
     heroLead: '<strong>say</strong> is a cross-platform text-to-speech command that works like the one built into macOS. It runs on Windows, Linux and macOS, comes with 300+ Microsoft Edge neural voices, and needs no ffmpeg.',
     copy: 'Copy',
     copied: 'Copied',
-    heroNote: 'Requires Node.js 18 or later. Installing downloads the native binary for your platform and checks its <span class="nw">SHA-256</span>.',
+    heroNote: 'Requires Node.js 18 or later, and verifies the binary’s <span class="nw">SHA-256</span>. No Node.js? <a href="#install">Use the one-line installer</a>.',
     voicesTitle: '300+ voices. Start with these 8.',
     voicesLead: 'The default is HsiaoChen, a Taiwanese Mandarin voice. To switch, type any part of a voice name after <code>-v</code>; case doesn’t matter.',
     langZhTW: 'Mandarin (Taiwan)',
@@ -69,8 +69,12 @@
     fOffline: 'Works offline',
     nOffline: 'Needs a network',
     installTitle: 'Install say',
-    installLead: 'npm is the easiest way. The install script downloads a prebuilt binary for your system and verifies its <span class="nw">SHA-256</span>, so you need neither Rust nor ffmpeg.',
+    installLead: 'No Node.js? Use the one-line installer. Already have Node.js? npm works too. Either way you get a prebuilt binary for your system with its <span class="nw">SHA-256</span> verified, and you need neither Rust nor ffmpeg.',
     installTabs: 'Ways to install',
+    tabScript: 'One-line install',
+    scriptText: 'No Node.js needed. The script downloads the binary for your system, verifies its <span class="nw">SHA-256</span>, and puts it in <code>~/.local/bin</code>. On Windows it also adds that folder to your <code>PATH</code>; on macOS and Linux it tells you the line to add if the folder isn’t on your <code>PATH</code> yet.',
+    scriptUnix: 'macOS and Linux',
+    scriptWin: 'Windows (PowerShell)',
     tabNpm: 'npm (global)',
     tabNpx: 'npx (no install)',
     tabCargo: 'Build from source',
@@ -82,7 +86,7 @@
     dlButton: 'Download from GitHub Releases',
     platformsTitle: 'Prebuilt platforms',
     pAppleSilicon: 'Apple silicon',
-    platformsNote: 'On anything else, install Rust and build from source.',
+    platformsNote: 'The Linux builds need glibc 2.38 or later, such as Ubuntu 24.04. On anything else, install Rust and build from source.',
     usageTitle: 'Everyday commands',
     usageLead: 'From a single sentence to a spoken heads-up when your build is done.',
     rSpeakT: 'Speak some text',
@@ -113,6 +117,9 @@
     rHiT: 'Highlight as it speaks',
     rHiP: '<code>-i</code> marks each word in your terminal as it’s spoken, in reverse video or a colour you choose. <code>--progress</code> shows a progress bar.',
     rHiC: '<span class="pr">$</span> say <span class="fl">-i</span> "Reverse video by default"\n<span class="pr">$</span> say <span class="fl">--interactive=green</span> "Now in green"\n<span class="pr">$</span> say <span class="fl">--progress</span> "Showing synthesis and playback progress"',
+    agentsTitle: 'A note for your agent',
+    agentsLead: 'Paste this into <code>AGENTS.md</code>, <code>CLAUDE.md</code> or your agent’s custom instructions. Each time it finishes a task, it reads a short summary aloud with say, so you hear how it went even when you’re away from the screen. Any agent that can run terminal commands will do: <span class="nw">Claude Code</span>, Codex, Copilot, Cursor and others.',
+    agentsPrompt: 'When the whole task is done, right before you reply to me, use `say` to read a short summary aloud:\n- One or two sentences: what you did, whether it worked, and anything I need to look at.\n- It will be spoken, so keep it conversational. Skip code, file paths and URLs.\n- Example: `say -v Ava "Fixed the login bug and all tests pass. Please check the new error message."`',
     optionsTitle: 'All options',
     optionsLead: 'Also available in your terminal with <code>say --help</code>.',
     oColOpt: 'Option',
@@ -142,7 +149,6 @@
     closeGh: 'View source on GitHub',
     closeNpm: 'View the npm package',
     brandTop: 'Back to top',
-    footerText: 'MIT licensed, © 2026 Will Huang. Voices by Microsoft Edge TTS; this project is not affiliated with Microsoft.',
     footerNav: 'Related links',
     fReleases: 'Releases',
     fIssues: 'Report an issue',
@@ -393,7 +399,9 @@
   document.addEventListener('click', async (e) => {
     const btn = e.target.closest('.copy');
     if (!btn) return;
-    const text = btn.dataset.copy || commandsIn(btn.parentElement.querySelector('pre code')?.textContent || '');
+    // data-copy-all copies the whole block as shown (a prose prompt); otherwise only the `$ ` command lines.
+    const shown = btn.closest('.term')?.querySelector('pre code')?.textContent || '';
+    const text = btn.dataset.copy || (btn.hasAttribute('data-copy-all') ? shown.trim() : commandsIn(shown));
     try {
       await writeClipboard(text);
       btn.textContent = t('copied');

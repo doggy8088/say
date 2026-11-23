@@ -34,6 +34,41 @@ npx @willh/say "你好，這是跨平台 say 工具！"
 
 > 安裝時 `postinstall` 會從 [GitHub Releases](https://github.com/doggy8088/say/releases) 下載對應平台的原生二進位壓縮檔，並強制執行 SHA-256 校驗碼驗證。
 
+### 一行指令安裝（不需要 Node.js）
+
+macOS、Linux：
+
+```bash
+curl -fsSL https://say.gh.miniasp.com/install.sh | sh
+```
+
+Windows（PowerShell）：
+
+```powershell
+irm https://say.gh.miniasp.com/install.ps1 | iex
+```
+
+安裝腳本會從 GitHub Releases 下載對應平台的執行檔、核對 SHA-256，再放進 `~/.local/bin`（Windows 是 `%USERPROFILE%\.local\bin`）。Windows 會自動把這個資料夾加進使用者的 `PATH`；macOS 與 Linux 如果還沒把它加進 `PATH`，腳本會印出要加的那一行指令。
+
+可以用環境變數調整安裝方式：
+
+| 環境變數 | 說明 |
+| --- | --- |
+| `SAY_INSTALL_DIR` | 安裝目錄，預設為 `~/.local/bin`。 |
+| `SAY_VERSION` | 要安裝的版本，例如 `v0.1.0`；預設為最新版。 |
+| `SAY_NO_MODIFY_PATH=1` | 僅 Windows：不要修改使用者的 `PATH`。 |
+
+```bash
+# 安裝指定版本到自訂目錄
+curl -fsSL https://say.gh.miniasp.com/install.sh | SAY_INSTALL_DIR="$HOME/bin" sh -s -- --version v0.1.0
+```
+
+```powershell
+$env:SAY_VERSION = 'v0.1.0'; irm https://say.gh.miniasp.com/install.ps1 | iex
+```
+
+macOS 內建了 `/usr/bin/say`，誰先被執行取決於 `PATH` 的順序；如果內建版本排在前面，安裝腳本會提醒你。要解除安裝，刪除 `~/.local/bin/say`（Windows 是 `~\.local\bin\say.exe`）即可。
+
 ## 參數說明
 
 | 參數 | 環境變數 / 預設值 | 說明 |
@@ -116,7 +151,7 @@ say --interactive=green "Highlighting spoken words in green."
 | `win32-x64` | `x86_64-pc-windows-msvc` | `.zip` |
 | `win32-arm64` | `aarch64-pc-windows-msvc` | `.zip` |
 
-若在清單以外的平台使用，可安裝 Rust 工具鏈後從原始碼編譯。
+若在清單以外的平台使用，可安裝 Rust 工具鏈後從原始碼編譯。Linux 預編譯版需要 glibc 2.38 以上（例如 Ubuntu 24.04 以後）；較舊的發行版（例如 Ubuntu 22.04）請從原始碼編譯。
 
 ## 本機開發與測試
 
@@ -158,7 +193,7 @@ npm pack --dry-run
 
 ## 官方網站
 
-[`site/`](site/) 是不需建置的純靜態網站（HTML、CSS、JavaScript），試聽音檔皆由本工具實際合成。推送到 `main` 且變更了 `site/**` 時，[`.github/workflows/pages.yml`](.github/workflows/pages.yml) 會自動部署到 GitHub Pages：<https://say.gh.miniasp.com/>。
+[`site/`](site/) 是不需建置的純靜態網站（HTML、CSS、JavaScript），試聽音檔皆由本工具實際合成。推送到 `main` 且變更了 `site/**` 時，[`.github/workflows/pages.yml`](.github/workflows/pages.yml) 會自動部署到 GitHub Pages：<https://say.gh.miniasp.com/>。部署時也會把根目錄的 `install.sh`、`install.ps1` 複製到網站根目錄，所以修改這兩支腳本同樣會觸發部署。
 
 本機預覽（需透過 HTTP 開啟，音訊分析與時間軸才能運作）：
 

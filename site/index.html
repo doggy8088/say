@@ -102,7 +102,7 @@
           <code translate="no" class="install__cmd"><span class="pr" aria-hidden="true">$</span> npm install -g @willh/say</code>
           <button class="copy" type="button" data-copy="npm install -g @willh/say" data-i18n="copy">複製</button>
         </div>
-        <p class="hero__note" data-i18n="heroNote">需要 Node.js 18 以上。安裝時會下載你的平台對應的原生執行檔，並核對 <span class="nw">SHA-256</span>。</p>
+        <p class="hero__note" data-i18n="heroNote">需要 Node.js 18 以上，安裝時會核對執行檔的 <span class="nw">SHA-256</span>。沒有 Node.js？<a href="#install">改用一行指令安裝</a>。</p>
       </div>
     </section>
 
@@ -288,17 +288,37 @@ zh-TW-YunJheNeural     zh-TW   Male    Microsoft YunJhe Online (Natural) - Chine
         <div>
           <div class="section__head">
             <h2 id="install-title" data-i18n="installTitle">安裝 say</h2>
-            <p data-i18n="installLead">用 npm 裝最省事。安裝腳本會依你的系統下載預先編譯好的執行檔並核對 <span class="nw">SHA-256</span>，電腦上不需要 Rust，也不需要 ffmpeg。</p>
+            <p data-i18n="installLead">沒有 Node.js 的話，用一行指令安裝；已經裝了 Node.js，也可以用 npm。兩種方式都會下載對應系統、預先編譯好的執行檔並核對 <span class="nw">SHA-256</span>，電腦上不需要 Rust，也不需要 ffmpeg。</p>
           </div>
 
           <div class="tabs" data-tabs>
             <div class="tabs__list" role="tablist" data-i18n-aria="installTabs" aria-label="安裝方式">
-              <button role="tab" type="button" id="tab-npm" aria-controls="panel-npm" aria-selected="true" data-i18n="tabNpm">npm 全域安裝</button>
+              <button role="tab" type="button" id="tab-script" aria-controls="panel-script" aria-selected="true" data-i18n="tabScript">一行指令安裝</button>
+              <button role="tab" type="button" id="tab-npm" aria-controls="panel-npm" aria-selected="false" tabindex="-1" data-i18n="tabNpm">npm 全域安裝</button>
               <button role="tab" type="button" id="tab-npx" aria-controls="panel-npx" aria-selected="false" tabindex="-1" data-i18n="tabNpx">npx 免安裝</button>
               <button role="tab" type="button" id="tab-cargo" aria-controls="panel-cargo" aria-selected="false" tabindex="-1" data-i18n="tabCargo">從原始碼編譯</button>
               <button role="tab" type="button" id="tab-dl" aria-controls="panel-dl" aria-selected="false" tabindex="-1" data-i18n="tabDl">下載執行檔</button>
             </div>
 
+            <div class="tabs__panel" role="tabpanel" id="panel-script" aria-labelledby="tab-script" tabindex="0">
+              <p class="panel-text" data-i18n="scriptText">不需要 Node.js。腳本會下載對應系統的執行檔、核對 <span class="nw">SHA-256</span>，再裝進 <code translate="no">~/.local/bin</code>。Windows 會自動把這個資料夾加進 <code translate="no">PATH</code>；macOS 和 Linux 如果還沒加，腳本會告訴你要加哪一行。</p>
+              <div class="term-stack">
+                <div class="term">
+                  <div class="term__bar">
+                    <span class="term__file" data-i18n="scriptUnix">macOS 與 Linux</span>
+                    <button class="copy" type="button" data-i18n="copy">複製</button>
+                  </div>
+<pre translate="no"><code translate="no"><span class="pr">$</span> curl <span class="fl">-fsSL</span> https://say.gh.miniasp.com/install.sh | sh</code></pre>
+                </div>
+                <div class="term">
+                  <div class="term__bar">
+                    <span class="term__file" data-i18n="scriptWin">Windows（PowerShell）</span>
+                    <button class="copy" type="button" data-copy="irm https://say.gh.miniasp.com/install.ps1 | iex" data-i18n="copy">複製</button>
+                  </div>
+<pre translate="no"><code translate="no"><span class="pr">PS&gt;</span> irm https://say.gh.miniasp.com/install.ps1 | iex</code></pre>
+                </div>
+              </div>
+            </div>
             <div class="tabs__panel" role="tabpanel" id="panel-npm" aria-labelledby="tab-npm" tabindex="0">
               <div class="term">
                 <button class="copy copy--term" type="button" data-i18n="copy">複製</button>
@@ -337,7 +357,7 @@ zh-TW-YunJheNeural     zh-TW   Male    Microsoft YunJhe Online (Natural) - Chine
             <div><dt>Windows x64</dt><dd>x86_64-pc-windows-msvc</dd></div>
             <div><dt>Windows ARM64</dt><dd>aarch64-pc-windows-msvc</dd></div>
           </dl>
-          <p class="platforms__note" data-i18n="platformsNote">其他平台可以裝好 Rust 後自行編譯。</p>
+          <p class="platforms__note" data-i18n="platformsNote">Linux 版需要 glibc 2.38 以上，例如 Ubuntu 24.04。其他平台或較舊的系統，可以裝好 Rust 後自行編譯。</p>
         </div>
       </div>
     </section>
@@ -448,6 +468,27 @@ zh-TW-YunJheNeural     zh-TW   Male    Microsoft YunJhe Online (Natural) - Chine
       </div>
     </section>
 
+    <!-- For agents: a short prompt that makes a coding agent speak its own summary when it is done. -->
+    <section class="section" id="agents" aria-labelledby="agents-title">
+      <div class="wrap split">
+        <div class="section__head split__head">
+          <h2 id="agents-title" data-i18n="agentsTitle">給 Agent 的話</h2>
+          <p data-i18n="agentsLead">把這段提示詞貼進 <code translate="no">AGENTS.md</code>、<code translate="no">CLAUDE.md</code> 或 Agent 的自訂指令，它每完成一項任務就會用 say 念出摘要，人不在螢幕前也知道結果。<span class="nw">Claude Code</span>、Codex、Copilot、Cursor 這些能執行終端機指令的 Agent 都適用。</p>
+        </div>
+
+        <div class="term term--prompt">
+          <div class="term__bar">
+            <span class="term__file" translate="no">AGENTS.md</span>
+            <button class="copy" type="button" data-copy-all data-i18n="copy">複製</button>
+          </div>
+<pre translate="no"><code translate="no" data-i18n="agentsPrompt">整個任務完成、準備回覆我之前，請用 `say` 指令把這次的執行摘要念出來：
+- 用一兩句話說明做了什麼、有沒有成功，以及需要我處理的事。
+- 這段話是要念給人聽的，請用口語，不要念程式碼、檔案路徑或網址。
+- 例如：`say "登入頁的錯誤修好了，測試全部通過。新的錯誤訊息請你確認一下。"`</code></pre>
+        </div>
+      </div>
+    </section>
+
     <!-- Options reference -->
     <section class="section" id="options" aria-labelledby="options-title">
       <div class="wrap">
@@ -510,7 +551,7 @@ zh-TW-YunJheNeural     zh-TW   Male    Microsoft YunJhe Online (Natural) - Chine
         <img src="assets/img/logo-64.png" width="24" height="24" alt="" loading="lazy">
         <span translate="no">say</span>
       </a>
-      <p data-i18n="footerText">MIT 授權，© 2026 Will Huang。語音由 Microsoft Edge TTS 提供，本專案與 Microsoft 無關。</p>
+      <p>© 2026 <a href="https://www.facebook.com/will.fans/">Will 保哥</a></p>
       <nav class="footer__links" data-i18n-aria="footerNav" aria-label="相關連結">
         <a href="https://github.com/doggy8088/say">GitHub</a>
         <a href="https://www.npmjs.com/package/@willh/say">npm</a>

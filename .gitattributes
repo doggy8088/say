@@ -1,0 +1,2 @@
+# install.sh is piped straight into sh, so keep LF line endings on every checkout.
+install.sh text eol=lf

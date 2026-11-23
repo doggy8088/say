@@ -354,6 +354,16 @@ html[lang="en"] .section__head h2 { letter-spacing: -0.02em; }
 .copy--term { position: absolute; top: 10px; right: 10px; z-index: 1; }
 .term:has(.copy--term) pre { padding-right: 92px; }
 
+/* A prose prompt: the copy button sits in a file bar so wrapped lines can use the full width. */
+.term__bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 9px 9px 9px 20px;
+  border-bottom: 1px solid var(--rule);
+}
+.term__file { font-family: var(--mono); font-variation-settings: "MONO" 1, "CASL" 0; font-size: 0.8125rem; color: var(--mist); }
+.term--prompt pre { font-size: 0.9375rem; line-height: 1.8; }
+.term--prompt pre code { white-space: pre-wrap; overflow-wrap: anywhere; }
+
 /* ---------- Compatibility ---------- */
 .split { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 80px); align-items: start; }
 .split__head { position: sticky; top: calc(var(--nav-h) + 40px); margin-bottom: 0; }
@@ -405,6 +415,9 @@ html[lang="en"] .section__head h2 { letter-spacing: -0.02em; }
 .tabs__list [role="tab"][aria-selected="true"]::after { transform: scaleX(1); }
 .tabs__panel:focus-visible { outline-offset: 6px; }
 .panel-text { color: var(--mist); margin-bottom: 20px; max-width: 38em; }
+.term-stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.hero__note a { text-underline-offset: 4px; }
+.hero__note a:hover { color: var(--paper); }
 
 .platforms h3 { font-size: var(--t-md); margin-bottom: 16px; }
 .platforms dl { margin: 0; border-top: 1px solid var(--rule); }
@@ -453,6 +466,8 @@ html[lang="en"] .close h2 { letter-spacing: -0.02em; }
 .footer__links { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-left: auto; }
 .footer__links a { padding: 10px; text-decoration: none; }
 .footer__links a:hover { color: var(--paper); text-decoration: underline; text-underline-offset: 4px; }
+.footer p a { text-underline-offset: 4px; }
+.footer p a:hover { color: var(--paper); }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 1080px) {

@@ -27,3 +27,35 @@ jobs:
       - run: cargo test
       - run: npm test
       - run: npm pack --dry-run
+
+  # Runs the one-line installers against the latest GitHub Release.
+  installers:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Lint install.sh
+        if: runner.os == 'Linux'
+        run: shellcheck -s sh install.sh
+      - name: install.sh
+        if: runner.os != 'Windows'
+        run: |
+          sh install.sh --dir "$RUNNER_TEMP/say-bin"
+          "$RUNNER_TEMP/say-bin/say" --version
+      - name: install.ps1 (PowerShell 7)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          ./install.ps1 -InstallDir "$env:RUNNER_TEMP\say-pwsh" -NoModifyPath
+          & "$env:RUNNER_TEMP\say-pwsh\say.exe" --version
+      - name: install.ps1 through Invoke-Expression (Windows PowerShell 5.1)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $env:SAY_INSTALL_DIR = "$env:RUNNER_TEMP\say-ps51"
+          $env:SAY_NO_MODIFY_PATH = '1'
+          Get-Content -Raw ./install.ps1 | Invoke-Expression
+          & "$env:RUNNER_TEMP\say-ps51\say.exe" --version

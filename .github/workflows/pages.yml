@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - "site/**"
+      - "install.sh"
+      - "install.ps1"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -26,6 +28,9 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: actions/configure-pages@v6
+      # Serve the installers at https://say.gh.miniasp.com/install.sh and /install.ps1.
+      - name: Add install scripts
+        run: cp install.sh install.ps1 site/
       - uses: actions/upload-pages-artifact@v5
         with:
           path: site

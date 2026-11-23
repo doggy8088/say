@@ -2,23 +2,28 @@
 'use strict';
 
 const { spawnSync } = require('node:child_process');
-const { existsSync } = require('node:fs');
-const { join } = require('node:path');
+const { ensureBinary, findBinary } = require('./install.cjs');
 
-const BINARY_NAME = 'say';
-const exe = process.platform === 'win32' ? `${BINARY_NAME}.exe` : BINARY_NAME;
-const bin = join(__dirname, `${BINARY_NAME}-bin`, exe);
+async function main() {
+  let bin = findBinary();
+  if (!bin) {
+    // The package installs without an install script (newer npm versions block them), so
+    // the first run fetches the native binary for this computer.
+    process.stderr.write('say: downloading the native binary for this computer (first run only)...\n');
+    try {
+      bin = await ensureBinary();
+    } catch (error) {
+      console.error(`say: could not download the native binary: ${error.message}`);
+      process.exit(1);
+    }
+  }
 
-if (!existsSync(bin)) {
-  console.error(
-    `${BINARY_NAME} native binary was not found at ${bin}. Try reinstalling @willh/say or running "npm rebuild @willh/say".`,
-  );
-  process.exit(1);
+  const result = spawnSync(bin, process.argv.slice(2), { stdio: 'inherit' });
+  if (result.error) {
+    console.error(result.error.message);
+    process.exit(1);
+  }
+  process.exit(result.status ?? 1);
 }
 
-const result = spawnSync(bin, process.argv.slice(2), { stdio: 'inherit' });
-if (result.error) {
-  console.error(result.error.message);
-  process.exit(1);
-}
-process.exit(result.status ?? 1);
+main();

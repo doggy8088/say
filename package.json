@@ -1,18 +1,17 @@
 {
   "name": "@willh/say",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Cross-platform say CLI powered by Microsoft Edge TTS (msedge-tts), compatible with macOS say with default voice zh-TW-HsiaoChenNeural.",
   "bin": {
     "say": "npm/cli.cjs"
   },
   "scripts": {
-    "postinstall": "node npm/postinstall.cjs",
-    "test": "node --test tests/postinstall.test.cjs",
+    "test": "node --test tests/install.test.cjs",
     "prepublishOnly": "npm test && npm pack --dry-run && node npm/prepublish-check.cjs"
   },
   "files": [
     "npm/cli.cjs",
-    "npm/postinstall.cjs",
+    "npm/install.cjs",
     "npm/prepublish-check.cjs",
     "README.md",
     "LICENSE"

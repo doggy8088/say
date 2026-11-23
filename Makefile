@@ -19,9 +19,9 @@ install-local: release ## 編譯 Release 並安裝 say 執行檔至 ~/.local/bin
 uninstall-local: ## 從 ~/.local/bin 移除本機安裝的 say 執行檔
 	@node -e "const fs=require('fs'),os=require('os'),path=require('path');const bin=process.platform==='win32'?'say.exe':'say';const dst=path.join(os.homedir(),'.local','bin',bin);if(fs.existsSync(dst)){fs.rmSync(dst,{force:true});console.log('==> 已移除 '+dst);}else{console.log('==> 未找到 '+dst+'，無需移除。');}"
 
-stage-npm: release ## 編譯 Release 並透過 postinstall 安裝至本機 npm/say-bin/
+stage-npm: release ## 編譯 Release 並安裝至本機 npm/say-bin/
 	@node -e "console.log('==> 正在安裝 Release 二進位檔至本機 npm/say-bin/...');"
-	node npm/postinstall.cjs
+	node npm/install.cjs
 	@node -e "console.log('==> 本機 npm 包裝安裝完成，可使用 node npm/cli.cjs 執行。');"
 
 fmt: ## 自動格式化全部 Rust 程式碼

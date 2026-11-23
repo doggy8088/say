@@ -9,13 +9,15 @@ const test = require('node:test');
 const {
   TARGETS,
   artifactName,
+  binaryCandidates,
+  cacheRoot,
   cargoTarget,
   findExtractedBinary,
   platformKey,
   releaseBaseUrl,
   sha256,
   verifyChecksum,
-} = require('../npm/postinstall.cjs');
+} = require('../npm/install.cjs');
 const { expectedReleaseUrls, verifyReleaseAssets } = require('../npm/prepublish-check.cjs');
 
 test('maps all 6 supported platforms to Rust targets', () => {
@@ -95,6 +97,19 @@ test('finds extracted binary at root, nested directory, or throws when missing',
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+});
+
+test('uses a per-user cache folder for each platform', () => {
+  assert.equal(cacheRoot('win32', { LOCALAPPDATA: 'C:\\Users\\a\\AppData\\Local' }, 'C:\\Users\\a'), join('C:\\Users\\a\\AppData\\Local', 'willh-say'));
+  assert.equal(cacheRoot('darwin', {}, '/Users/a'), join('/Users/a', 'Library', 'Caches', 'willh-say'));
+  assert.equal(cacheRoot('linux', {}, '/home/a'), join('/home/a', '.cache', 'willh-say'));
+  assert.equal(cacheRoot('linux', { XDG_CACHE_HOME: '/tmp/xdg' }, '/home/a'), join('/tmp/xdg', 'willh-say'));
+});
+
+test('looks for the binary in the package first, then in the versioned cache', () => {
+  const [inPackage, inCache] = binaryCandidates('9.9.9');
+  assert.ok(inPackage.includes(join('npm', 'say-bin')));
+  assert.ok(inCache.startsWith(join(cacheRoot(), '9.9.9')));
 });
 
 test('prepublish check builds and validates all 12 release asset URLs', async () => {

@@ -32,7 +32,7 @@ say "Hello from cross-platform say!"
 npx @willh/say "你好，這是跨平台 say 工具！"
 ```
 
-> 安裝時 `postinstall` 會從官方網站（<https://say.gh.miniasp.com/releases/>，內容與 GitHub Releases 相同）下載對應平台的原生二進位壓縮檔，並強制執行 SHA-256 校驗碼驗證。
+> 套件本身不含任何 install script（新版 npm 預設會封鎖它們）。第一次執行 `say` 時，才會從官方網站（<https://say.gh.miniasp.com/releases/>，內容與 GitHub Releases 相同）下載對應平台的原生二進位壓縮檔，並強制執行 SHA-256 校驗碼驗證。執行檔存放在套件目錄；若該目錄沒有寫入權限（例如以 `sudo` 全域安裝），則改存到使用者的快取目錄。
 
 ### 一行指令安裝（不需要 Node.js）
 
@@ -173,7 +173,7 @@ cargo test
 
 # 編譯本機 Release 二進位檔並以本機回退模式安裝至 npm 包裝器
 cargo build --release
-node npm/postinstall.cjs
+node npm/install.cjs
 node npm/cli.cjs --help
 
 # 執行 npm 包裝器測試與薄型套件乾跑檢查

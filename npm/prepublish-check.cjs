@@ -3,7 +3,7 @@
 
 const { request } = require('node:https');
 const { URL } = require('node:url');
-const { artifactName, releaseBaseUrl, TARGETS } = require('./postinstall.cjs');
+const { artifactName, releaseBaseUrl, TARGETS } = require('./install.cjs');
 
 const MAX_REDIRECTS = 5;
 

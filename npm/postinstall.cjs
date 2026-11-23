@@ -123,11 +123,15 @@ function extract(archive, destDir) {
   mkdirSync(destDir, { recursive: true });
   if (archive.endsWith('.zip')) {
     if (process.platform === 'win32') {
+      // Unzip through .NET, not Expand-Archive: Windows PowerShell started from PowerShell 7
+      // inherits PowerShell 7's module path, loads an incompatible Expand-Archive that fails,
+      // and still exits 0.
       run('powershell', [
         '-NoProfile',
         '-NonInteractive',
         '-Command',
-        `Expand-Archive -Force -LiteralPath ${psQuote(archive)} -DestinationPath ${psQuote(destDir)}`,
+        "$ErrorActionPreference = 'Stop'; Add-Type -AssemblyName System.IO.Compression.FileSystem; " +
+          `[IO.Compression.ZipFile]::ExtractToDirectory(${psQuote(archive)}, ${psQuote(destDir)})`,
       ]);
     } else {
       run('unzip', ['-o', archive, '-d', destDir]);

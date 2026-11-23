@@ -192,6 +192,7 @@ npm pack --dry-run
    - [`.github/workflows/pages.yml`](.github/workflows/pages.yml) 會重新部署網站，把所有版本的 Release 資產鏡像到 `https://say.gh.miniasp.com/releases/download/<tag>/`，並以 `releases/latest.txt` 記錄最新版本。安裝腳本與 npm 套件都從這裡下載。
 4. 網站部署完成後：
    - [`.github/workflows/npm-publish.yml`](.github/workflows/npm-publish.yml) 會取出最新 Release 的標籤、對齊版本，執行 `prepublishOnly`（`npm test`、`npm pack --dry-run` 以及 `node npm/prepublish-check.cjs` 驗證網站上 6 平台共 12 個資產皆可下載），接著以 `npm publish --access public` 發佈 `@willh/say`。已發佈過的版本會自動略過；也可以用 `gh workflow run npm-publish.yml` 手動執行。私有儲存庫無法產生 npm provenance，所以發佈時不帶 `--provenance`。
+5. npm 可能把新版本列為「staged」而不是直接上線（工作流程會顯示警告）。這時需要維護者用 2FA 核准：到 <https://www.npmjs.com/package/@willh/say> 的 Staged Packages 分頁，或使用新版 npm CLI 的 `npm stage approve`。
 
 ## 官方網站
 

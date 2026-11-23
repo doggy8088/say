@@ -1,6 +1,6 @@
 {
   "name": "@willh/say",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Cross-platform say CLI powered by Microsoft Edge TTS (msedge-tts), compatible with macOS say with default voice zh-TW-HsiaoChenNeural.",
   "bin": {
     "say": "npm/cli.cjs"

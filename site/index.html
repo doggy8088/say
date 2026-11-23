@@ -301,23 +301,19 @@ zh-TW-YunJheNeural     zh-TW   Male    Microsoft YunJhe Online (Natural) - Chine
             </div>
 
             <div class="tabs__panel" role="tabpanel" id="panel-script" aria-labelledby="tab-script" tabindex="0">
-              <p class="panel-text" data-i18n="scriptText">不需要 Node.js。腳本會下載對應系統的執行檔、核對 <span class="nw">SHA-256</span>，再裝進 <code translate="no">~/.local/bin</code>。Windows 會自動把這個資料夾加進 <code translate="no">PATH</code>；macOS 和 Linux 如果還沒加，腳本會告訴你要加哪一行。</p>
-              <div class="term-stack">
-                <div class="term">
-                  <div class="term__bar">
-                    <span class="term__file" data-i18n="scriptUnix">macOS 與 Linux</span>
-                    <button class="copy" type="button" data-i18n="copy">複製</button>
-                  </div>
-<pre translate="no"><code translate="no"><span class="pr">$</span> curl <span class="fl">-fsSL</span> https://say.gh.miniasp.com/install.sh | sh</code></pre>
-                </div>
-                <div class="term">
-                  <div class="term__bar">
-                    <span class="term__file" data-i18n="scriptWin">Windows（PowerShell）</span>
-                    <button class="copy" type="button" data-copy="irm https://say.gh.miniasp.com/install.ps1 | iex" data-i18n="copy">複製</button>
-                  </div>
-<pre translate="no"><code translate="no"><span class="pr">PS&gt;</span> irm https://say.gh.miniasp.com/install.ps1 | iex</code></pre>
-                </div>
-              </div>
+              <ul class="oneliner" role="list">
+                <li>
+                  <span class="oneliner__os" data-i18n="scriptUnix">macOS 與 Linux</span>
+                  <code translate="no" class="oneliner__cmd"><span class="pr" aria-hidden="true">$ </span>curl <span class="fl">-fsSL</span> https://say.gh.miniasp.com/<wbr><span class="nw">install.sh | sh</span></code>
+                  <button class="copy" type="button" data-copy="curl -fsSL https://say.gh.miniasp.com/install.sh | sh" data-i18n="copy">複製</button>
+                </li>
+                <li>
+                  <span class="oneliner__os" data-i18n="scriptWin">Windows（PowerShell）</span>
+                  <code translate="no" class="oneliner__cmd"><span class="pr" aria-hidden="true">PS&gt; </span>irm https://say.gh.miniasp.com/<wbr><span class="nw">install.ps1 | iex</span></code>
+                  <button class="copy" type="button" data-copy="irm https://say.gh.miniasp.com/install.ps1 | iex" data-i18n="copy">複製</button>
+                </li>
+              </ul>
+              <p class="panel-note" data-i18n="scriptNote">預設裝在 <code translate="no">~/.local/bin</code>。Windows 會自動把它加進 <code translate="no">PATH</code>；macOS 與 Linux 如果還沒加，腳本會印出要加的那一行。想裝到別處，先設定 <code translate="no">SAY_INSTALL_DIR</code>。</p>
             </div>
             <div class="tabs__panel" role="tabpanel" id="panel-npm" aria-labelledby="tab-npm" tabindex="0">
               <div class="term">

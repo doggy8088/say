@@ -72,7 +72,7 @@
     installLead: 'No Node.js? Use the one-line installer. Already have Node.js? npm works too. Either way you get a prebuilt binary for your system with its <span class="nw">SHA-256</span> verified, and you need neither Rust nor ffmpeg.',
     installTabs: 'Ways to install',
     tabScript: 'One-line install',
-    scriptText: 'No Node.js needed. The script downloads the binary for your system, verifies its <span class="nw">SHA-256</span>, and puts it in <code>~/.local/bin</code>. On Windows it also adds that folder to your <code>PATH</code>; on macOS and Linux it tells you the line to add if the folder isn’t on your <code>PATH</code> yet.',
+    scriptNote: 'Installs to <code>~/.local/bin</code>. On Windows the script adds that folder to your <code>PATH</code>; on macOS and Linux it prints the line to add if it isn’t there yet. To install somewhere else, set <code>SAY_INSTALL_DIR</code> first.',
     scriptUnix: 'macOS and Linux',
     scriptWin: 'Windows (PowerShell)',
     tabNpm: 'npm (global)',

@@ -415,7 +415,30 @@ html[lang="en"] .section__head h2 { letter-spacing: -0.02em; }
 .tabs__list [role="tab"][aria-selected="true"]::after { transform: scaleX(1); }
 .tabs__panel:focus-visible { outline-offset: 6px; }
 .panel-text { color: var(--mist); margin-bottom: 20px; max-width: 38em; }
-.term-stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+/* One-line installers: a row per OS, each command with its copy button beside it. */
+.oneliner { list-style: none; margin: 0; padding: 0; border: 1px solid var(--rule); border-radius: var(--r-m); background: var(--ink-2); }
+.oneliner li {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center;
+  column-gap: 16px; row-gap: 6px;
+  padding: 16px 12px 16px 20px;
+}
+.oneliner li + li { border-top: 1px solid var(--rule); }
+.oneliner__os { grid-column: 1; color: var(--mist); font-size: var(--t-sm); }
+.oneliner__cmd {
+  grid-column: 1; display: block; overflow-x: auto; white-space: pre;
+  padding: 0; border-radius: 0; background: none;
+  font-size: 0.9375rem; line-height: 1.6;
+}
+.oneliner__cmd .pr { color: var(--mist); user-select: none; }
+.oneliner__cmd .fl { color: var(--amber); }
+.oneliner .copy { grid-column: 2; grid-row: 1 / span 2; }
+@media (max-width: 560px) {
+  /* Phones: the copy button joins the label row and the command wraps across the full width. */
+  .oneliner li { padding: 14px 12px 16px 16px; row-gap: 8px; }
+  .oneliner .copy { grid-row: 1; }
+  .oneliner__cmd { grid-column: 1 / -1; white-space: pre-wrap; overflow-wrap: break-word; font-size: 0.8125rem; }
+}
+.panel-note { margin-top: 14px; color: var(--mist); font-size: var(--t-sm); max-width: 46em; }
 .hero__note a { text-underline-offset: 4px; }
 .hero__note a:hover { color: var(--paper); }
 

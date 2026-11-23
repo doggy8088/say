@@ -7,6 +7,7 @@ on:
       - "site/**"
       - "install.sh"
       - "install.ps1"
+      - "scripts/stamp-assets.mjs"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -31,6 +32,10 @@ jobs:
       # Serve the installers at https://say.gh.miniasp.com/install.sh and /install.ps1.
       - name: Add install scripts
         run: cp install.sh install.ps1 site/
+      # Version every asset URL by content hash, so browsers never mix a new page
+      # with a stylesheet or script cached from the previous deploy.
+      - name: Version asset URLs
+        run: node scripts/stamp-assets.mjs site
       - uses: actions/upload-pages-artifact@v5
         with:
           path: site

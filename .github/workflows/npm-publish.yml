@@ -41,8 +41,10 @@ jobs:
         run: npm install -g npm@latest
       - name: Skip a version that is already on npm
         id: check
+        # `npm view` exits 0 with no output for a version that doesn't exist, so compare the output.
         run: |
-          if npm view "@willh/say@${{ steps.release.outputs.version }}" version >/dev/null 2>&1; then
+          VERSION="${{ steps.release.outputs.version }}"
+          if [ "$(npm view "@willh/say@$VERSION" version 2>/dev/null)" = "$VERSION" ]; then
             echo "::notice::@willh/say@${{ steps.release.outputs.version }} is already on npm."
             echo "skip=true" >> "$GITHUB_OUTPUT"
           fi

@@ -52,8 +52,9 @@ jobs:
         if: steps.check.outputs.skip != 'true'
         run: npm version "${{ steps.release.outputs.version }}" --no-git-tag-version --allow-same-version
       # No --provenance: npm only issues provenance for packages built from public repositories.
-      # npm may stage the version instead of releasing it; a maintainer then approves it with
-      # 2FA (npmjs.com > the package > Staged Packages, or `npm stage approve`).
+      # npm first holds a new version as "staged" while it checks it, usually for 2-3 minutes;
+      # a rerun during that window gets a 409. If a version stays staged, a maintainer approves
+      # it with 2FA (npmjs.com > the package > Staged Packages, or `npm stage approve`).
       - name: Publish
         if: steps.check.outputs.skip != 'true'
         env:
@@ -65,18 +66,18 @@ jobs:
           status=${PIPESTATUS[0]}
           set -e
           if [ "$status" -ne 0 ] && grep -q "previously staged version" publish.log; then
-            echo "::warning::@willh/say@$VERSION is already staged on npm and waits for a maintainer's 2FA approval."
+            echo "::warning::@willh/say@$VERSION is already staged on npm; it goes live once npm finishes checking it."
             exit 0
           fi
           exit "$status"
       - name: Report whether the version is live
         if: steps.check.outputs.skip != 'true'
         run: |
-          for attempt in 1 2 3 4 5 6; do
+          for attempt in $(seq 1 30); do
             if [ "$(npm view "@willh/say@$VERSION" version 2>/dev/null)" = "$VERSION" ]; then
               echo "::notice::@willh/say@$VERSION is live on npm."
               exit 0
             fi
             sleep 10
           done
-          echo "::warning::@willh/say@$VERSION is staged on npm. Approve it with 2FA at https://www.npmjs.com/package/@willh/say (Staged Packages) or with npm stage approve."
+          echo "::warning::@willh/say@$VERSION is still staged on npm after 5 minutes. If it doesn't go live, approve it with 2FA at https://www.npmjs.com/package/@willh/say (Staged Packages) or with npm stage approve."
